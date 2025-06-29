@@ -169,6 +169,7 @@ def train(data):
         # seq[1:] shape: [tgt_len, batch_size] -> reshape -1 -> [tgt_len * batch_size]
 
         print(f'seq: {seq}')
+        print(f'idx2word 0: {idx2word[0]}')
         t_loss = text_criterion(
             log_word_prob.view(-1, ntokens), 
             seq[1:].reshape((-1,))
