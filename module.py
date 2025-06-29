@@ -300,15 +300,27 @@ class PETER(nn.Module):
         right = text.t() == self.pad_idx  # replace pad_idx with True and others with False, (batch_size, total_len - ui_len)
         key_padding_mask = torch.cat([left, right], 1)  # (batch_size, total_len)
 
-        print(f'key padding mask: {key_padding_mask}')
+        # print(f'key padding mask: {key_padding_mask}') 
+        """
+        key padding mask: tensor([[False, False, False,  ..., False, False, False],
+        [False, False, False,  ..., False,  True,  True],
+        [False, False, False,  ...,  True,  True,  True],
+        ...,
+        [False, False, False,  ...,  True,  True,  True],
+        [False, False, False,  ...,  True,  True,  True],
+        [False, False, False,  ..., False, False, False]], device='cuda:0') 
+        """
 
         u_src = self.user_embeddings(user.unsqueeze(0))  # (1, batch_size, emsize)
         i_src = self.item_embeddings(item.unsqueeze(0))  # (1, batch_size, emsize)
         w_src = self.word_embeddings(text)  # (total_len - ui_len, batch_size, emsize)
         src = torch.cat([u_src, i_src, w_src], 0)  # (total_len, batch_size, emsize)
         src = src * math.sqrt(self.emsize)
-        src = self.pos_encoder(src)
+        src = self.pos_encoder(src) # positional encoding 
         hidden, attns = self.transformer_encoder(src, attn_mask, key_padding_mask)  # (total_len, batch_size, emsize) vs. (nlayers, batch_size, total_len_tgt, total_len_src)
+        
+        print(f'hidden shape: {hidden.shape}')
+        
         if rating_prediction:
             rating = self.predict_rating(hidden)  # (batch_size,)
         else:
