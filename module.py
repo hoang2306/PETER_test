@@ -48,7 +48,12 @@ class TransformerEncoderLayer(nn.Module):
             state['activation'] = func.relu
         super(TransformerEncoderLayer, self).__setstate__(state)
 
-    def forward(self, src: Tensor, src_mask: Optional[Tensor] = None, src_key_padding_mask: Optional[Tensor] = None) -> Tuple[Tensor, Tensor]:
+    def forward(
+        self, 
+        src: Tensor, 
+        src_mask: Optional[Tensor] = None, 
+        src_key_padding_mask: Optional[Tensor] = None
+    ) -> Tuple[Tensor, Tensor]:
         r"""Pass the input through the encoder layer.
 
         Args:
@@ -59,8 +64,15 @@ class TransformerEncoderLayer(nn.Module):
         Shape:
             see the docs in Transformer class.
         """
-        src2, attn = self.self_attn(src, src, src, attn_mask=src_mask,
-                                    key_padding_mask=src_key_padding_mask)
+
+        # key_padding_mask: mask các token pad của input 
+        # attn_mask: causal mask - ngăn một token nhìn về tương lai (chỉ nhìn về phía trước)
+        # src = q = k = v
+        src2, attn = self.self_attn(
+            src, src, src, 
+            attn_mask=src_mask,
+            key_padding_mask=src_key_padding_mask
+        )
         src = src + self.dropout1(src2)
         src = self.norm1(src)
         src2 = self.linear2(self.dropout(self.activation(self.linear1(src))))
@@ -278,6 +290,8 @@ class PETER(nn.Module):
         '''
         device = user.device
         batch_size = user.size(0)
+        print(f'len ui: {self.ui_len}')
+        print(f'text size: {text.size(0)}')
         total_len = self.ui_len + text.size(0)  # deal with generation when total_len != src_len + tgt_len
         # see nn.MultiheadAttention for attn_mask and key_padding_mask
         attn_mask = self.attn_mask[:total_len, :total_len].to(device)  # (total_len, total_len)
