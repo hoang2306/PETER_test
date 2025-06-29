@@ -163,7 +163,16 @@ def train(data):
         context_dis = log_context_dis.unsqueeze(0).repeat((tgt_len - 1, 1, 1))  # (batch_size, ntoken) -> (tgt_len - 1, batch_size, ntoken)
         c_loss = text_criterion(context_dis.view(-1, ntokens), seq[1:-1].reshape((-1,)))
         r_loss = rating_criterion(rating_p, rating)
-        t_loss = text_criterion(log_word_prob.view(-1, ntokens), seq[1:].reshape((-1,)))
+        # log_word_prob shape: [tgt_len, batch_size, ntoken]
+        # log_word_prob.view(-1, ntokens) shape: [tgt_len * batch_size, ntoken]
+        # seq shape: [tgt_len + 1, batch_size]
+        # seq[1:] shape: [tgt_len, batch_size] -> reshape -1 -> [tgt_len * batch_size]
+
+        print(f'seq: {seq}')
+        t_loss = text_criterion(
+            log_word_prob.view(-1, ntokens), 
+            seq[1:].reshape((-1,))
+        )
         loss = args.text_reg * t_loss + args.context_reg * c_loss + args.rating_reg * r_loss
         loss.backward()
 

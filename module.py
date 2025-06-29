@@ -319,17 +319,24 @@ class PETER(nn.Module):
         src = self.pos_encoder(src) # positional encoding 
         hidden, attns = self.transformer_encoder(src, attn_mask, key_padding_mask)  # (total_len, batch_size, emsize) vs. (nlayers, batch_size, total_len_tgt, total_len_src)
         
-        print(f'hidden shape: {hidden.shape}')
+        # print(f'hidden shape: {hidden.shape}') # [total_len, bs, d]
         
         if rating_prediction:
+            # use get first token in each batch to predict rating score 
             rating = self.predict_rating(hidden)  # (batch_size,)
         else:
             rating = None
+
+
         if context_prediction:
+            # use second token in each batch to predict rating score 
             log_context_dis = self.predict_context(hidden)  # (batch_size, ntoken)
         else:
             log_context_dis = None
+
+
         if seq_prediction:
+            # tgt_len: target len 
             log_word_prob = self.predict_seq(hidden)  # (tgt_len, batch_size, ntoken)
         else:
             log_word_prob = self.generate_token(hidden)  # (batch_size, ntoken)
