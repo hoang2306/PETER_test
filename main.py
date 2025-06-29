@@ -8,6 +8,7 @@ from utils import rouge_score, bleu_score, DataLoader, Batchify, now_time, ids2t
     root_mean_square_error, mean_absolute_error, feature_detect, feature_matching_ratio, feature_coverage_ratio, feature_diversity
 
 
+print('starting get parser')
 parser = argparse.ArgumentParser(description='PErsonalized Transformer for Explainable Recommendation (PETER)')
 parser.add_argument('--data_path', type=str, default=None,
                     help='path for loading the pickle data')
@@ -58,6 +59,8 @@ parser.add_argument('--use_feature', action='store_true',
 parser.add_argument('--words', type=int, default=15,
                     help='number of words to generate for each sample')
 args = parser.parse_args()
+
+print(f'get parser done !!!')
 
 if args.data_path is None:
     parser.error('--data_path should be provided for loading data')
