@@ -144,7 +144,7 @@ def train(data):
         print(f'item: {item.shape}')
         print(f'rating: {rating.shape}')
         print(f'seq: {seq.shape}')
-        print(f'feature: {feature.shape}' if feature is not None)
+        print(f'feature: {feature.shape}')
 
         batch_size = user.size(0)
         user = user.to(device)  # (batch_size,)
