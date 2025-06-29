@@ -157,7 +157,7 @@ def train(data):
         else:
             text = seq[:-1]  # (src_len + tgt_len - 2, batch_size)
         # Starting each batch, we detach the hidden state from how it was previously produced.
-        # If we didn't, the model would try backpropagating all the way to start of the dataset.
+        # If we didn't, the model would try back-propagating all the way to start of the dataset.
         optimizer.zero_grad()
         log_word_prob, log_context_dis, rating_p, _ = model(user, item, text)  # (tgt_len, batch_size, ntoken) vs. (batch_size, ntoken) vs. (batch_size,)
         context_dis = log_context_dis.unsqueeze(0).repeat((tgt_len - 1, 1, 1))  # (batch_size, ntoken) -> (tgt_len - 1, batch_size, ntoken)

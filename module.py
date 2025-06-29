@@ -290,12 +290,13 @@ class PETER(nn.Module):
         '''
         device = user.device
         batch_size = user.size(0)
-        print(f'len ui: {self.ui_len}')
-        print(f'text size: {text.size(0)}')
+        # print(f'len ui: {self.ui_len}') # 2 
+        # print(f'text size: {text.size(0)}') # 17 
         total_len = self.ui_len + text.size(0)  # deal with generation when total_len != src_len + tgt_len
         # see nn.MultiheadAttention for attn_mask and key_padding_mask
         attn_mask = self.attn_mask[:total_len, :total_len].to(device)  # (total_len, total_len)
         left = torch.zeros(batch_size, self.ui_len).bool().to(device)  # (batch_size, ui_len)
+        print(f'left mask matrix: {left}')
         right = text.t() == self.pad_idx  # replace pad_idx with True and others with False, (batch_size, total_len - ui_len)
         key_padding_mask = torch.cat([left, right], 1)  # (batch_size, total_len)
 
