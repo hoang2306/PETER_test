@@ -140,7 +140,11 @@ def train(data):
     while True:
         user, item, rating, seq, feature = data.next_batch()  # (batch_size, seq_len), data.step += 1
         
-        print(f'user: {user}')
+        print(f'user: {user.shape}')
+        print(f'item: {item.shape}')
+        print(f'rating: {rating.shape}')
+        print(f'seq: {seq.shape}')
+        print(f'feature: {feature.shape}' if feature is not None)
 
         batch_size = user.size(0)
         user = user.to(device)  # (batch_size,)
