@@ -139,6 +139,9 @@ def train(data):
     total_sample = 0
     while True:
         user, item, rating, seq, feature = data.next_batch()  # (batch_size, seq_len), data.step += 1
+        
+        print(f'user: {user}')
+
         batch_size = user.size(0)
         user = user.to(device)  # (batch_size,)
         item = item.to(device)
